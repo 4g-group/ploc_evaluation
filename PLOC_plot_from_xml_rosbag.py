@@ -426,7 +426,7 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
         plt.savefig(bag.rstrip(".bag") + '_PLOC_orientation_erreur.' + figure_format, format=figure_format)
         if plot_show:
             plt.show()
-        obFichier = open(bag.rstrip(".bag") +'_PLOC_Erreur_Note.txt', 'w')
+        obFichier = open(bag.rstrip(".bag") +'_PLOC_erreur_note.txt', 'w')
         obFichier.write('Erreurs CEP')
         obFichier.write("\nErreur CEP :" + str(error_stationnary))
         obFichier.write("\nErreur Horizontale à 75% :" + str(mean_CEPH75))
