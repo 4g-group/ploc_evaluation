@@ -16,10 +16,11 @@ replace "Cryptodome" by "Crypto" in /opt/ros/melodic/lib/python3/dist-packages/r
 
 * Launch the script to vizualize either save graphs
 
-`python3 ./PLOC_plot_from_xml_rosbag.py -b /path/to/bag.bag -g /path/to/ground_truth_folder -s ref|eval -f Figureformat [-d]`
+`python3 ./PLOC_plot_from_xml_rosbag.py -b /path/to/bag.bag -g /path/to/ground_truth_folder -s ref|eval -f png|pdf|svg -i true/false [-d]`
 
     * -b or --bagpath, path to bag to evaluate (with ploc message inside hehe)
     * -g or --gtdirectory, path to ground truth files
     * -s or --scenario, to choose the right scenario to evaluate
     * -f or --format, to choose the ouput graph file format, e.g. 'png', 'pdf', 'svg', ...
+    * -i or --init, boolean to choose if evaluation must be done as an initialisation point has been given or not
     * -d or --display, to display graph at runtime (optional)
