@@ -556,20 +556,24 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
     if plot_show:
         plt.show()
 
+def usage(comment):
+    print(comment)
+    print('\nUsage: \n ./PLOC-plot.py -b <Bag-path> -g <Ground-truth-directory> -s <Scenario-name> -i <Initialisation-boolean> -f <Output-image-format> [-d]')
 
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hb:g:s:i:f:d:", ['help', 'bagpath=', 'gtdirectory=', 'scenario=', 'init=', 'figure_format=', 'display='])
     except getopt.GetoptError as err:
-        # print help information and exit:
-        print(err)  # will print something like "option -a not recognized"
-        sys.usage()
+        usage(f"\n ERROR ! {err}")
         sys.exit(2)
+    bag = None
     groundtruth = None
+    scenario = None
+    init = None
+    figure_format = None
     plot_show = False
     for opt, arg in opts:
         if opt == '-h':
-            print('./PLOC-plot.py -b <BagPath> -g <Ground-truth-directory> -s <Scenario> -i <InitialisationT/F>-f <Imageformat> [-d]')
             sys.exit()
         elif opt in ("-b", "--bagpath"):
             bag = arg
@@ -591,4 +595,10 @@ if __name__ == "__main__":
             print('Display figures during runtime :', plot_show)
         else:
             assert False, "Unhandled option"
-    main(bag, groundtruth, scenario, init, figure_format, plot_show)
+    if bag and groundtruth and scenario and (init == False) or init and figure_format:
+        main(bag, groundtruth, scenario, init, figure_format, plot_show)
+    else:
+        usage(f"\nMissing arguments ! bag: {bag}, groundtruth: {groundtruth},"
+                f" scenario: {scenario}, init: {init} and figure_format: {figure_format}")
+        sys.exit()
+
