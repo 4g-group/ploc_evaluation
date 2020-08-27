@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 '''Copyright © 2020 by SGME (4G group)
@@ -42,8 +42,12 @@ from shapely.geometry import Point, Polygon
 import xml.etree.ElementTree as ET
 import xmltodict
 import csv
-import rosbag_pandas
+import shutil
+sys.path.append('../')
 import time as TIME
+from lib.Bag2csv import write2csv
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 def groundtruth_retrieval(groundtruth, scenario):
     if scenario == 'ref':
@@ -162,6 +166,18 @@ def groundtruth_retrieval(groundtruth, scenario):
     print(dplan)
     return dplan, dg, dg_time, overlays
 
+def bag2pd(bag, topic, option):
+    write2csv(bag, topic)
+    folder = bag.rstrip(".bag") + "_csv"
+    filename = folder + '/' + topic[0].replace('/', '_slash_') + '.csv'
+    data = pd.read_csv(filename)
+    if not option:
+        shutil.rmtree(folder, ignore_errors=True)
+    data.columns = '/decision_maker/ploc/' + data.columns
+    print(data.columns)
+    return data
+
+
 def main(bag, groundtruth, scenario, init, figure_format, plot_show):
     plt.rcParams['figure.figsize'] = [10, 10]
     pd.set_option("display.precision", 10)
@@ -178,9 +194,9 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
         print(eval_points)
     # PLOC
     topics=["/decision_maker/ploc"]
-    df = rosbag_pandas.bag_to_dataframe(bag, include=topics)
+    df = bag2pd(bag, topics, False)
+    print "df ready ! {}".format(df.columns.values.tolist())
     position = df[['/decision_maker/ploc/lat', '/decision_maker/ploc/lat_dir', '/decision_maker/ploc/lon', '/decision_maker/ploc/lon_dir']]
-
     # Convert deg min to deg decimal
     decimallat = []
     decimallon = []
@@ -272,7 +288,7 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
 
     # plot path in 3D
     threedee = plt.figure().gca(projection='3d')
-    colors = {'-3':'red','-2': 'red','-1':'tab:green', '0':'tab:blue', '1':'black', '2':'tab:orange', '3':'tab:purple', '4':'tab:pink', '5':'tab:cyan','6':'m', '7':'coral','8':'cadetblue'}
+    colors = {'-3':'red','-2': 'red','-1':'tab:green', '0':'tab:blue', '1':'black', '2':'tab:orange', '3':'tab:purple', '4':'tab:pink', '5':'tab:cyan','6':'m', '7':'coral', '8':'cadetblue'}
     threedee.plot(df['decimal lon'], df['decimal lat'],df['/decision_maker/ploc/alt'], c='gray', label='WGS-trace')
     # Additional options
     threedee.scatter(df['decimal lon'], df['decimal lat'],df['/decision_maker/ploc/alt'], c=df['/decision_maker/ploc/level'].apply(lambda x: colors[str(int(x))]), s=100, lw=0)
@@ -390,7 +406,7 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
                 # plt.savefig(bag.rstrip(".bag") + '_PLOC_Erreur-2D-Stationnaire_' + str(gt[0][2]) +'.'+ figure_format, format=figure_format)
                 # if plot_show:
                 #     plt.show()
-                error_stationnary.append({u'Numero de stationnaire': eval_points[['Numero']].values[i][0], u'Erreur 2D': error_h, u'Erreur V': error_v})
+                error_stationnary.append({u'Numero de stationnaire': eval_points[['Numero']].values[i][0], u'Erreur 2D': error_h[q3], u'Erreur V': error_v[q3]})
                 note_cep_h += numpy.exp(- error_h[q3] /3)
                 note_cep_v += numpy.exp(- error_v[q3] / 3)
         note_cep_h = 130. * note_cep_h / len(points_to_consider_stationnary)
@@ -452,7 +468,7 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
         plt.savefig(bag.rstrip(".bag") + '_PLOC_orientation_erreur.' + figure_format, format=figure_format)
         if plot_show:
             plt.show()
-        obFichier = open(bag.rstrip(".bag") +'_PLOC_erreur_note.txt', 'w')
+        obFichier = open(bag.rstrip(".bag") +'_PLOC_Erreur_Note.txt', 'w')
         obFichier.write('Erreurs CEP')
         obFichier.write("\nErreur CEP :" + str(error_stationnary))
         obFichier.write("\nErreur Horizontale à 75% :" + str(mean_CEPH75))
@@ -465,19 +481,6 @@ def main(bag, groundtruth, scenario, init, figure_format, plot_show):
         obFichier.write("\nNote Précision Géométrique V :" + str(note_cep_v) + " sur 70")
         obFichier.write("\nNote Précision orientation :" + str(note_heading) + " sur 20")
         obFichier.close()
-
-        print('Erreurs CEP')
-        print("Erreur CEP :" + str(error_stationnary))
-        print("Erreur Horizontale à 75% :" + str(mean_CEPH75))
-        print("Erreur Verticale à 75% :" + str(mean_CEPV75))
-        print("Critère Topologique :" + str(Topo))
-        print("Erreur Orientation :" + str(mean_error_heading))
-        print("========================================================")
-        print("Note Précision Topologique :" + str(note_topo) + " sur 200")
-        print("Note Précision Géométrique 2D :" + str(note_cep_h)+ " sur 130" )
-        print("Note Précision Géométrique V :" + str(note_cep_v) + " sur 70")
-        print("Note Précision orientation :" + str(note_heading) + " sur 20")
-
         ground_truth_environnement = []
         ground_truth_heading = []
         ground_truth_altitude = []
@@ -564,13 +567,12 @@ if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hb:g:s:i:f:d:", ['help', 'bagpath=', 'gtdirectory=', 'scenario=', 'init=', 'figure_format=', 'display='])
     except getopt.GetoptError as err:
-        usage(f"\n ERROR ! {err}")
         sys.exit(2)
     bag = None
     groundtruth = None
     scenario = None
-    init = None
-    figure_format = None
+    init = False
+    figure_format = 'png'
     plot_show = False
     for opt, arg in opts:
         if opt == '-h':
@@ -595,10 +597,4 @@ if __name__ == "__main__":
             print('Display figures during runtime :', plot_show)
         else:
             assert False, "Unhandled option"
-    if bag and groundtruth and scenario and (init == False) or init and figure_format:
-        main(bag, groundtruth, scenario, init, figure_format, plot_show)
-    else:
-        usage(f"\nMissing arguments ! bag: {bag}, groundtruth: {groundtruth},"
-                f" scenario: {scenario}, init: {init} and figure_format: {figure_format}")
-        sys.exit()
-
+    main(bag, groundtruth, scenario, init, figure_format, plot_show)
