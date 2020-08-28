@@ -75,15 +75,17 @@ float32 alt_std_dev
 
 ## Usage
 
-`python3 ./PLOC_plot_from_xml_rosbag.py -b /path/to/bag.bag -g /path/to/ground_truth_folder -s ref|eval -f png|pdf|svg -i true/false [-d]`
+```#bash
+./PLOC_plot_from_xml_rosbag.py -b /path/to/bag.bag -g /path/to/ground_truth_folder -s ref|eval -f png|pdf|svg -i true/false [-d]
+```
 
     * -b or --bagpath, path to bag to evaluate (with ploc message inside hehe)
     * -g or --gtdirectory, path to ground truth files
-    * -s or --scenario, to choose the right scenario to evaluate
+    * -s or --scenario, to choose the right scenario to evaluate {eval/ref}
     * -f or --format, to choose the ouput graph file format, e.g. 'png', 'pdf', 'svg', ...
     * -i or --init, boolean to choose if evaluation must be done as an initialisation point has been given or not
     * -d or --display, to display graph at runtime (optional)
-    
+
  ## Output
  This script will output several files :
  * KML files for vizaulisation using Google earth or other Maps application :
@@ -102,7 +104,5 @@ float32 alt_std_dev
    * CEP criteria for each stationnary points in the horizontal and vertical plane
    * Global CEPH75 which is the mean of each CEP75 criteria obtained for each stationnary point in horizontal plane
    * Global CEPV75 which is the mean of each CEP75 criteria obtained for each statoionnary point in vertical plane
-   * Topological criteria for each enclosing volumes 
+   * Topological criteria for each enclosing volumes
    * Mean orientation error on stationnary points with imposed orientations
-   
-   
