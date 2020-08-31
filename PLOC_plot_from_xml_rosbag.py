@@ -51,11 +51,11 @@ sys.setdefaultencoding("utf-8")
 
 def groundtruth_retrieval(groundtruth, scenario):
     if scenario == 'ref':
-        groundtruth_time = groundtruth + "/" + "TEMPS_PASSAGE_CyborgLoc_Ref.txt"
-        groundtruth_base =  groundtruth + "/" + "BASE_3D_CFIS41_scenario_ref.xml"
+        groundtruth_time = groundtruth + "/" + "R_scenario_Timestamp.txt"
+        groundtruth_base =  groundtruth + "/" + "R_BASE_3D_CFIS41.xml"
     elif scenario == 'eval':
-        groundtruth_time = groundtruth + "/" "TEMPS_PASSAGE_CyborgLoc_Eval.txt"
-        groundtruth_base =  groundtruth + "/" + "BASE_3D_CFIS41_scenario_eval.xml"
+        groundtruth_time = groundtruth + "/" "E_scenario_Timestamp.txt"
+        groundtruth_base =  groundtruth + "/" + "E_BASE_3D_CFIS41.xml"
     groundtruth_plan = groundtruth + "/" + "BASE_PLAN_CFIS41.xml"
     groundtruth_plan_soussol = groundtruth + "/"+ "sdis_-1.png"
     groundtruth_plan_rdc = groundtruth + "/"+ "sdis_0.png"
