@@ -48,23 +48,23 @@ import time as TIME
 from lib.Bag2csv import write2csv
 reload(sys)
 sys.setdefaultencoding("utf-8")
-
+url_png = "http://www.sgme.com/Data_paper_Cyborgloc/Plans_images_competition_intermediaire"
 def groundtruth_retrieval(groundtruth, scenario):
     if scenario == 'ref':
-        groundtruth_time = groundtruth + "/" + "R_scenario_Timestamp.txt"
-        groundtruth_base =  groundtruth + "/" + "R_BASE_3D_CFIS41.xml"
+        groundtruth_time = groundtruth + "/" + "R_scenario_TimeStamp.txt"
+        groundtruth_base =  groundtruth + "/" + "R_scenario_BASE_3D_CFIS41.xml"
     elif scenario == 'eval':
-        groundtruth_time = groundtruth + "/" "E_scenario_Timestamp.txt"
-        groundtruth_base =  groundtruth + "/" + "E_BASE_3D_CFIS41.xml"
-    groundtruth_plan = groundtruth + "/" + "BASE_PLAN_CFIS41.xml"
-    groundtruth_plan_soussol = groundtruth + "/"+ "sdis_-1.png"
-    groundtruth_plan_rdc = groundtruth + "/"+ "sdis_0.png"
-    groundtruth_plan_premier = groundtruth + "/"+ "sdis_1.png"
-    groundtruth_plan_second = groundtruth + "/"+ "sdis_2.png"
-    groundtruth_plan_troisieme = groundtruth + "/"+ "sdis_3.png"
-    groundtruth_plan_quatrieme = groundtruth + "/"+ "sdis_4.png"
-    groundtruth_plan_cinquieme = groundtruth + "/"+ "sdis_5.png"
-    groundtruth_plan_sixieme = groundtruth + "/"+ "sdis_6.png"
+        groundtruth_time = groundtruth + "/" "E_scenario_TimeStamp.txt"
+        groundtruth_base =  groundtruth + "/" + "E_scenario_BASE_3D_CFIS41.xml"
+    groundtruth_plan = groundtruth + "/" + "maps/BASE_PLAN_CFIS41.xml"
+    groundtruth_plan_soussol = url_png + "/"+ "sdis_-1.png"
+    groundtruth_plan_rdc = url_png + "/"+ "sdis_0.png"
+    groundtruth_plan_premier = url_png + "/"+ "sdis_1.png"
+    groundtruth_plan_second = url_png + "/"+ "sdis_2.png"
+    groundtruth_plan_troisieme = url_png + "/"+ "sdis_3.png"
+    groundtruth_plan_quatrieme = url_png + "/"+ "sdis_4.png"
+    groundtruth_plan_cinquieme = url_png + "/"+ "sdis_5.png"
+    groundtruth_plan_sixieme = url_png + "/"+ "sdis_6.png"
     overlays = {'-1':groundtruth_plan_soussol, '0':groundtruth_plan_rdc, '1':groundtruth_plan_premier,'2':groundtruth_plan_second, '3':groundtruth_plan_troisieme, '4':groundtruth_plan_quatrieme, '5':groundtruth_plan_cinquieme, '6':groundtruth_plan_sixieme}
     # Read time from txt file given by DGA and put it in panda dataframe
     dg_time = pd.read_csv(groundtruth_time, header=None, skip_blank_lines=True, delimiter=';',
